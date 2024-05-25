@@ -1,42 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace terminal_graphics_engine;
 
-public class Scene(int size)
+// it is very worth-while noting that the appeared X and Y are flipped due to how multi-dimensional arrays are handled, so we account for that here
+// this may make working with this incredibly annoying
+public class Scene(int xSize, int ySize)
 {
-    int Size = size;
+    readonly int XSize = ySize;
+    readonly int YSize = xSize;
 
     public string GetRenderString(List<Sprite> sprites)
     {
-        // ultimtaely, the rendered screen is an array of characters
-        // 2D for X and Y
-        char[,] screen = new char[Size, Size];
+        // Initialize the screen with empty spaces
+        char[,] screen = new char[XSize,YSize];
+        for (int i = 0; i < XSize; i++)
+            for (int j = 0; j < YSize; j++)
+                screen[i, j] = ' ';
 
+        // Iterate over each sprite
         foreach (Sprite sprite in sprites)
         {
-            for (int i = 0; i < sprite.Texture.Length; i++)
+            int roundedX = (int)MathF.Round(sprite.Position.X);
+            int roundedY = (int)MathF.Round(sprite.Position.Y);
+
+            // Iterate over each character in the sprite's texture
+            int targettedScreenX = roundedX;
+            int targettedScreenY = roundedY;
+            foreach (char targettedCharTex in sprite.Texture)
             {
-                int targettedIndex = i;
-                char currentSpriteCharTexture = sprite.Texture[i];
-
-                // if the current texture index is one for the next line, we increment targettedInddex
-                // this ultimately decides where the char should be drawn
-                targettedIndex += (currentSpriteCharTexture == '\n') ? 1 : 0;
-
-                int roundedSpriteX = (int)Math.Round(sprite.Position.X);
-                int roundedSpriteY = (int)Math.Round(sprite.Position.Y) + targettedIndex;
-
-                screen[roundedSpriteX, roundedSpriteY] = sprite.Texture[i];
+                if (targettedCharTex == '\n')
+                {
+                    targettedScreenY++;
+                    targettedScreenX = roundedX;
+                    continue;
+                }
+                
+                screen[targettedScreenY, targettedScreenX++] = targettedCharTex;
             }
-
-            for (int i = 0; i = Siz)
         }
 
-        string resultantRender = string.Join(' ', screen);
-        return resultantRender;
+        // Convert the screen array to a string
+        StringBuilder resultantRender = new();
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < YSize; j++)
+                resultantRender.Append(screen[i, j]);
+            resultantRender.AppendLine();
+        }
+
+        return resultantRender.ToString();
     }
 }
