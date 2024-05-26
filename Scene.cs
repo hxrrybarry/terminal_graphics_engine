@@ -6,26 +6,24 @@ namespace terminal_graphics_engine;
 // this may make working with this incredibly annoying
 public class Scene(int xSize, int ySize)
 {
-    readonly int XSize = ySize;
-    readonly int YSize = xSize;
+    public readonly int XSize = ySize;
+    public readonly int YSize = xSize;
 
     public string GetRenderString(List<Sprite> sprites)
     {
-        // Initialize the screen with empty spaces
+        // initialize the screen with empty spaces
         char[,] screen = new char[XSize,YSize];
         for (int i = 0; i < XSize; i++)
             for (int j = 0; j < YSize; j++)
                 screen[i, j] = ' ';
 
-        // Iterate over each sprite
         foreach (Sprite sprite in sprites)
         {
-            int roundedX = (int)MathF.Round(sprite.Position.X);
-            int roundedY = (int)MathF.Round(sprite.Position.Y);
+            int roundedX = (int)MathF.Floor(sprite.Position.X);
 
-            // Iterate over each character in the sprite's texture
+            // iterate over each character in the sprite's texture
             int targettedScreenX = roundedX;
-            int targettedScreenY = roundedY;
+            int targettedScreenY = (int)MathF.Floor(sprite.Position.Y);
             foreach (char targettedCharTex in sprite.Texture)
             {
                 if (targettedCharTex == '\n')
@@ -34,12 +32,17 @@ public class Scene(int xSize, int ySize)
                     targettedScreenX = roundedX;
                     continue;
                 }
-                
-                screen[targettedScreenY, targettedScreenX++] = targettedCharTex;
+
+                // this can be used to prevent overlap on sprites where the character is a space
+                // instead of rendering a space as a character, we instead just increment x position at which the next character should be rendered
+                if (targettedCharTex == ' ')
+                    targettedScreenX++;          
+                else  
+                    screen[targettedScreenY, targettedScreenX++] = targettedCharTex;
             }
         }
 
-        // Convert the screen array to a string
+        // convert the screen array to a string to be rendered
         StringBuilder resultantRender = new();
         for (int i = 0; i < XSize; i++)
         {
