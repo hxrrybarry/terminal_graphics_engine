@@ -26,7 +26,7 @@ public class Scene(int xSize, int ySize)
             foreach (SpritePart targettedSpritePart in sprite.Texture)
             {
                 // we get the resultant screen coordinates by adding the relative SpritePart coordinates to the Sprite coordinates
-                int targettedScreenX = roundedX + (int)MathF.Floor(targettedSpritePart.Position.X);
+                int targettedScreenX = (int)MathF.Round(roundedX + targettedSpritePart.Position.X * sprite.ScaleCorrecting);
                 int targettedScreenY = roundedY + (int)MathF.Floor(targettedSpritePart.Position.Y);
 
                 // it is very worth-while noting that the appeared X and Y are flipped due to how multi-dimensional arrays are handled, so we account for that here

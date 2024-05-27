@@ -1,10 +1,13 @@
 ﻿namespace terminal_graphics_engine;
 
-public class Sprite(string texture, float x, float y)
+public class Sprite(string texture, float x, float y, bool isRenderCorrected = true)
 {
     public SpritePart[] Texture = GetTexture(texture);
     public Vector2 Position = new(x, y);
     public Vector2 BoundingBox = GetBoundingBox(GetTexture(texture));
+
+    // approximately, if you multiply the rendered X, it matches the space difference in lines
+    public readonly float ScaleCorrecting = isRenderCorrected ? 2f : 1f;
 
     public void Rotate(float angleRadians, Vector2 pivot)
     {
@@ -15,7 +18,7 @@ public class Sprite(string texture, float x, float y)
             SpritePart texturePart = Texture[i];
             Vector2 oldPosition = texturePart.Position;
 
-            // this allows us to to treat the pivot point as (x = 0, y = 0), which is then used for transformation calculation
+            // this allows us to to treat the pivot point as relative coordinates (x= 0, y = 0), which is then used for transformation calculation
             oldPosition -= pivot;
 
             // calculate new (x, y) given the angle in radians
@@ -45,7 +48,7 @@ public class Sprite(string texture, float x, float y)
         }    
     }
 
-    public static Vector2 GetBoundingBox(SpritePart[] tex)
+    private static Vector2 GetBoundingBox(SpritePart[] tex)
     {
         // the max string length on the x componenent will always be the x bound
         float boundingX = tex.Max(x => x.Position.X);
