@@ -15,8 +15,12 @@ public class Sprite(string texture, float x, float y)
             SpritePart texturePart = Texture[i];
             Vector2 oldPosition = texturePart.Position;
 
+            // this allows us to to treat the pivot point as (x = 0, y = 0), which is then used for transformation calculation
             oldPosition -= pivot;
 
+            // calculate new (x, y) given the angle in radians
+            // x' = xcosθ - ysinθ
+            // y' = ycosθ + xsinθ
             float newX = oldPosition.X * MathF.Cos(angleRadians) - oldPosition.Y * MathF.Sin(angleRadians);
             float newY = oldPosition.Y * MathF.Cos(angleRadians) + oldPosition.X * MathF.Sin(angleRadians);
 
@@ -61,11 +65,14 @@ public class Sprite(string texture, float x, float y)
         {
             if (c == '\n')
             {
+                // if a return is detected, it means we need to increment the targetted y component of the sprite char
+                // we also have to reset the targetted x, as that is relative to the line when rendering a string
                 targettedSpriteX = 0;
                 targettedSpriteY++;
                 continue;
             }
 
+            // add part to overall sprite and increment the x component, as the next char will always have an incremented x
             spriteParts.Add(new SpritePart(c, new Vector2(targettedSpriteX, targettedSpriteY)));
             targettedSpriteX++;
         }

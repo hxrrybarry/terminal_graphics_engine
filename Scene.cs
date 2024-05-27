@@ -4,6 +4,8 @@ namespace terminal_graphics_engine;
 
 public class Scene(int xSize, int ySize)
 {
+    // the flip here is intentional, as array handling is inverted compared to the (x, y) paradigm
+    // see other comment for further detail
     public readonly int XSize = ySize;
     public readonly int YSize = xSize;
 
@@ -23,6 +25,7 @@ public class Scene(int xSize, int ySize)
             // iterate over each character in the sprite's texture
             foreach (SpritePart targettedSpritePart in sprite.Texture)
             {
+                // we get the resultant screen coordinates by adding the relative SpritePart coordinates to the Sprite coordinates
                 int targettedScreenX = roundedX + (int)MathF.Floor(targettedSpritePart.Position.X);
                 int targettedScreenY = roundedY + (int)MathF.Floor(targettedSpritePart.Position.Y);
 
@@ -33,7 +36,7 @@ public class Scene(int xSize, int ySize)
             }
         }
 
-        // convert the screen array to a string to be rendered
+        // convert the screen array to a string to be rendered into the terminal
         StringBuilder resultantRender = new(XSize * YSize);
         for (int i = 0; i < XSize; i++)
         {

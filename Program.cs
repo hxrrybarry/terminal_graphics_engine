@@ -9,12 +9,12 @@ internal class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
 
-        Scene sc = new(250, 250);
+        Scene sc = new(100, 50);
 
         Sprite obj = new("#\n#\n#m", 10, 20);
         Sprite obj2 = new("#####", 10, 25);
 
-        string playerTexture = File.ReadAllText(@"C:\Users\harib\source\repos\terminal_graphics_engine\smiley.txt");
+        string playerTexture = File.ReadAllText(@"C:\Users\harib\source\repos\terminal_graphics_engine\text.txt");
         playerTexture = playerTexture.Replace("\r", "");
 
         Sprite obj3 = new(playerTexture, 25, 25);
