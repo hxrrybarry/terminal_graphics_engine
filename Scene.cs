@@ -2,8 +2,6 @@
 
 namespace terminal_graphics_engine;
 
-// it is very worth-while noting that the appeared X and Y are flipped due to how multi-dimensional arrays are handled, so we account for that here
-// this may make working with this incredibly annoying
 public class Scene(int xSize, int ySize)
 {
     public readonly int XSize = ySize;
@@ -20,30 +18,23 @@ public class Scene(int xSize, int ySize)
         foreach (Sprite sprite in sprites)
         {
             int roundedX = (int)MathF.Floor(sprite.Position.X);
+            int roundedY = (int)MathF.Floor(sprite.Position.Y);
 
             // iterate over each character in the sprite's texture
-            int targettedScreenX = roundedX;
-            int targettedScreenY = (int)MathF.Floor(sprite.Position.Y);
-            foreach (char targettedCharTex in sprite.Texture)
+            foreach (SpritePart targettedSpritePart in sprite.Texture)
             {
-                if (targettedCharTex == '\n')
-                {
-                    targettedScreenY++;
-                    targettedScreenX = roundedX;
-                    continue;
-                }
+                int targettedScreenX = roundedX + (int)MathF.Floor(targettedSpritePart.Position.X);
+                int targettedScreenY = roundedY + (int)MathF.Floor(targettedSpritePart.Position.Y);
 
-                // this can be used to prevent overlap on sprites where the character is a space
-                // instead of rendering a space as a character, we instead just increment x position at which the next character should be rendered
-                if (targettedCharTex == ' ')
-                    targettedScreenX++;          
-                else  
-                    screen[targettedScreenY, targettedScreenX++] = targettedCharTex;
+                // it is very worth-while noting that the appeared X and Y are flipped due to how multi-dimensional arrays are handled, so we account for that here
+                // this may make working with this incredibly annoying
+                // if you are looking and/or modifying this, please be VERY aware and careful of this principal - as it can completely obfuscate rendering if handled incorrectly
+                screen[targettedScreenY, targettedScreenX] = targettedSpritePart.Texture;
             }
         }
 
         // convert the screen array to a string to be rendered
-        StringBuilder resultantRender = new();
+        StringBuilder resultantRender = new(XSize * YSize);
         for (int i = 0; i < XSize; i++)
         {
             for (int j = 0; j < YSize; j++)

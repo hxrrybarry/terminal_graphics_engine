@@ -7,12 +7,15 @@ internal class Program
 {
     public static void Main()
     {
-        Scene sc = new(100, 50);
+        Console.OutputEncoding = Encoding.UTF8;
+
+        Scene sc = new(250, 250);
 
         Sprite obj = new("#\n#\n#m", 10, 20);
         Sprite obj2 = new("#####", 10, 25);
 
         string playerTexture = File.ReadAllText(@"C:\Users\harib\source\repos\terminal_graphics_engine\smiley.txt");
+        playerTexture = playerTexture.Replace("\r", "");
 
         Sprite obj3 = new(playerTexture, 25, 25);
 
@@ -30,6 +33,8 @@ internal class Program
             {
                 ConsoleKey key = Console.ReadKey(true).Key;
 
+                Vector2 pivot = spritesToRender[2].Center;
+
                 switch (key)
                 {
                     case ConsoleKey.D:
@@ -44,10 +49,18 @@ internal class Program
                     case ConsoleKey.S:
                         if (spritesToRender[2].Position.Y < sc.XSize - spritesToRender[2].BoundingBox.Y)
                             spritesToRender[2].Position.Y++; break;
+                    case ConsoleKey.LeftArrow:
+                        spritesToRender[2].Rotate(-0.05f, pivot); break;
+                    case ConsoleKey.RightArrow:
+                        spritesToRender[2].Rotate(0.05f, pivot); break;
                 }
 
-                renderString = sc.GetRenderString(spritesToRender);
-                Console.Clear();
+                try
+                {
+                    renderString = sc.GetRenderString(spritesToRender);
+                } catch { }
+                
+                Console.SetCursorPosition(0, 0);
                 Console.Write(renderString);
             }
         }
